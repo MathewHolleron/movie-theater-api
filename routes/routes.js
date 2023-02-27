@@ -1,44 +1,60 @@
+const { Router } = require('express');
 const express = require('express');
 const app = express();
+const {sequelize} = require('../db')
+const router = express.Router();
 
-
-
+const {User} = require('../models/User');
+const {Show} = require('../models/Show');
 
 // Shows
 
 // Get all shows
-app.get('/shows', (req, res) => {
-  // code to retrieve all shows
+router.get('/', async (req, res) => {
+  await Sequelize.sync()
+  try{
+    const shows = await Show.findAll();
+    res.json(shows);
+  } catch(error) {
+    console.error(error);
+  }
 });
 
 // Get one show
-app.get('/shows/:id', (req, res) => {
-  const showId = req.params.id;
-  // code to retrieve show by id
+router.get('/shows/:id', async (req, res) => {
+  await Sequelize.sync()
+  try{
+    const shows = await Show.findByPk(req.params.id);
+    res.json(shows);
+  } catch(error) {
+    console.error(error);
+  }
 });
 
 // Get shows of a particular genre
-app.get('/shows/genre/:genre', (req, res) => {
-  const genre = req.params.genre;
-  // code to retrieve shows by genre
+router.get('/shows/genre/:genre', (req, res) => {
+  await Sequelize.sync()
+  try{
+    const genre = req.params.genre;
+  
 });
 
 // Update rating of a show that has been watched
-app.put('/shows/:id/rating', (req, res) => {
+router.put('/shows/:id/rating', (req, res) => {
   const showId = req.params.id;
   const rating = req.body.rating;
   // code to update show rating
 });
 
 // Update the status of a show
-app.put('/shows/:id/status', (req, res) => {
+router.put('/shows/:id/status', (req, res) => {
   const showId = req.params.id;
   const status = req.body.status;
   // code to update show status
 });
 
 // Delete a show
-app.delete('/shows/:id', (req, res) => {
+router.delete('/shows/:id', (req, res) => {
   const showId = req.params.id;
   // code to delete show by id
 });
@@ -46,26 +62,50 @@ app.delete('/shows/:id', (req, res) => {
 // Users
 
 // Get all users
-app.get('/users', (req, res) => {
-    // code to retrieve all users
+router.get('/users', async (req, res) => {
+  await Sequelize.sync();
+  try{
+    const user = await User.findAll();
+    res.json(user);
+  } catch(error){
+    console.error(error);
+  }
+  
   });
   
   // Get one user
-  app.get('/users/:id', (req, res) => {
-    const userId = req.params.id;
-    // code to retrieve user by id
+  router.get('/users/:id', async (req, res) => {
+    await Sequelize.sync()
+    try{
+    const userId = await User.findByPk(req.params.id);
+    res.json(userId);
+  }catch (error){
+    console.error(error);
+  }
    
   });
   
   // Get shows watched by a user
-  app.get('/users/:id/shows', (req, res) => {
-    const userId = req.params.id;
-    
+  router.get('/users/:id/shows', async (req, res) => {
+    await Sequelize.sync()
+    try{
+      const shows = await Show.findAll({
+        where: {
+          user_id: id
+        }
+      })
+      res.json(shows);
+    } catch(error){
+      console.error(error);
+    }
+  };
     // code to retrieve shows watched by user
   });
   
   // Update or add a show if a user has watched it
-  app.put('/users/:id/shows', (req, res) => {
+  router.put('/users/:id/shows', async (req, res) => {
+    await Sequelize.sync();
+    
     const userId = req.params.id;
     const show = req.body;
     // code to update or add show for user
